@@ -1,35 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { operations } from '../operations/operations.object';
-import { Calculator } from './calc.class';
-import { opCodeTypes } from '../operations/operations.types';
-import { OperationResult } from '../operations/operations.types';
+import { Result } from '@badrap/result';
+import { DivisionByZeroError } from './calc.errors';
 
 @Injectable()
-export class CalcService extends Calculator {
+export class CalcService {
   getOperations(): string {
     return JSON.stringify(operations);
   }
-  callOperation(
-    operation: opCodeTypes,
-    x: number,
-    y?: number,
-  ): OperationResult {
-    const response: OperationResult = {
-      operation: {
-        name: operation,
-        x: x,
-        y: y,
-      },
-      error: '',
-      result: {
-        value: null,
-      },
-    };
-    try {
-      response.result.value = this[operation](x, y);
-    } catch (error) {
-      response.error = error.message;
+  async add(x: number, y: number): Promise<Result<number>> {
+    return Result.ok(x + y);
+  }
+  async sub(x: number, y: number): Promise<Result<number>> {
+    return Result.ok(x - y);
+  }
+  async mult(x: number, y: number): Promise<Result<number>> {
+    return Result.ok(x * y);
+  }
+  async div(x: number, y: number): Promise<Result<number>> {
+    if (y === 0) {
+      return Result.err(new DivisionByZeroError());
     }
-    return response;
+    return Result.ok(x / y);
+  }
+  async pow(x: number, y: number): Promise<Result<number>> {
+    return Result.ok(Math.pow(x, y));
+  }
+  async square_root(x: number): Promise<Result<number>> {
+    return Result.ok(Math.sqrt(x));
   }
 }
