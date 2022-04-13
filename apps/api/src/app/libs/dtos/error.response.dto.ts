@@ -1,11 +1,16 @@
-import { ErrorBase } from '../errors/error.base';
+import { ApiProperty } from '@nestjs/swagger';
+import { ErrorResponse } from '../errors/error.base';
 
-export class DivisionByZeroError extends ErrorBase {
-  readonly code = 'DIVISION_BY_ZERO';
+export class ErrorResponseDto implements ErrorResponse {
+  @ApiProperty({
+    description: 'Error description message',
+    example: 'An error occurred',
+  })
+  message: string;
 
-  static message = 'Division by zero, the denominator cannot be zero.';
-
-  constructor(metadata?: unknown) {
-    super(DivisionByZeroError.message, metadata);
-  }
+  @ApiProperty({
+    description: 'Error code',
+    example: 'GENERIC.INTERNAL_SERVER_ERROR',
+  })
+  code: string;
 }
